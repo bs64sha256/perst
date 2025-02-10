@@ -1,5 +1,5 @@
 from colorama import Fore
-from validators import email, domain, ipv4, url
+from validators import email, domain, ipv4, url, ipv6
 from requests import get, exceptions
 from tabulate import tabulate
 
@@ -155,11 +155,13 @@ def get_ssl_certificate(data: str):
 def input_check(command: str) -> None:
     if (command == '-h') or (command == '--help'): pass
     elif ((command[0:2] == '+7' and len(command) == 12) or (command[0] == '8' and len(command) == 11)) and command[1::].isdigit():
-        pass
+        print('>>> Телефонные номера пока не поддерживаются')
     elif email(command):
-        pass
+        print('>>> EMAIL-адреса пока не поддерживаются')
     elif domain(command):
-        pass
+        print('>>> Доменные имена пока не поддерживаются')
+    elif ipv6(command):
+        print('>>> IPv6-адреса пока не поддерживаются')
     elif ipv4(command):
         get_data_from_ip(command)
     elif url(command):
