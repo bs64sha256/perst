@@ -21,7 +21,7 @@ def start() -> None:
                                          ['>>>', '[email]', 'example@gmail.com', 'Выполнение операций по email'],
                                          ['>>>', '[phone]', '+79999999999', 'Выполнение операций по номеру телефона'],
                                          ['>>>', '[domain]', 'example.com', 'Выполнение операций по доменному имени']],
-                                        colalign=("center",), tablefmt="grid", showindex="always", headers="firstrow")+'\n')
+                                         colalign=("center",), tablefmt="grid", showindex="always", headers="firstrow")+'\n')
     # Обработка ввода в бесконечном цикле'''
     while True:
         command = input(Fore.LIGHTGREEN_EX+'Ввод: ').lower()

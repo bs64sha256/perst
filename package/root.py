@@ -5,34 +5,99 @@ from tabulate import tabulate
 
 import socket
 
+def get_data_from_ip(command: str) -> None:
+    print(Fore.LIGHTWHITE_EX + '\n>>> Поиск данных по IPv4-адресу\n')
+    import ipwhois
+    try:
+        results = ipwhois.IPWhois(command).lookup_whois()
+        print(Fore.LIGHTWHITE_EX + tabulate([['>>>', 'ПАРАМЕТР', 'ЗНАЧЕНИЕ'],
+                                             ['>>>', 'ASN', str(results['asn'])],
+                                             ['>>>', 'ASN CIDR', str(results['asn_cidr'])],
+                                             ['>>>', 'ДАТА РЕГИСТРАЦИИ ASN', str(results['asn_date'])],
+                                             ['>>>', 'СТРАНА', str(results['asn_country_code'])],
+                                             ['>>>', 'ОПИСАНИЕ ASN', str(results['asn_description'])],
+                                             ['>>>', 'РЕЕСТР ASN', str(results['asn_registry'])],
+                                             ['>>>', 'НАЦИОНАЛЬНЫЙ ИНТЕРНЕТ РЕГИСТР', str(results['nir'])],
+                                             ['>>>', 'QUERY', str(results['query'])],
+                                             ], colalign=("center",), tablefmt="grid", showindex="always",
+                                            headers="firstrow", stralign='left', maxcolwidths=[60, 60, 60, 60, 60]))
+        for i in range(len(results['nets'])):
+            print(Fore.LIGHTWHITE_EX + f'\nNETWORK {i + 1}\n')
+            print(Fore.LIGHTWHITE_EX + tabulate([['>>>', 'ПАРАМЕТР', 'ЗНАЧЕНИЕ'],
+                                                 ['>>>', 'АДРЕС', str(results['nets'][i]['address'])],
+                                                 ['>>>', 'CIDR', str(results['nets'][i]['cidr'])],
+                                                 ['>>>', 'ГОРОД', str(results['nets'][i]['city'])],
+                                                 ['>>>', 'СТРАНА', str(results['nets'][i]['country'])],
+                                                 ['>>>', 'ДАТА СОЗДАНИЯ', str(results['nets'][i]['created'])],
+                                                 ['>>>', 'ОПИСАНИЕ', str(results['nets'][i]['description'])],
+                                                 ['>>>', 'EMAIL АДРЕСА', str(results['nets'][i]['emails'])],
+                                                 ['>>>', 'HANDLE', str(results['nets'][i]['handle'])],
+                                                 ['>>>', 'ИМЯ', str(results['nets'][i]['name'])],
+                                                 ['>>>', 'ПОЧТОВЫЙ ИНДЕКС', str(results['nets'][i]['postal_code'])],
+                                                 ['>>>', 'ДИАПОЗОН', str(results['nets'][i]['range'])],
+                                                 ['>>>', 'ШТАТ', str(results['nets'][i]['state'])],
+                                                 ['>>>', 'ОБНОВЛЕНО', str(results['nets'][i]['updated'])]],
+                                                colalign=("center",), tablefmt="grid", showindex="always",
+                                                headers="firstrow", stralign='left', maxcolwidths=[60, 60, 60, 60, 60]))
+        print(Fore.LIGHTWHITE_EX + '\n>>> Поиск по базе данных WhoIs\n')
+        from whois import whois
+        data = whois(command)
+        print(Fore.LIGHTWHITE_EX + tabulate([['>>>', 'ПАРАМЕТР', 'ЗНАЧЕНИЕ'],
+                                             ['>>>', 'АДРЕС', str(data['address'])],
+                                             ['>>>', 'ГОРОД', str(data['city'])],
+                                             ['>>>', 'СТРАНА', str(data['country'])],
+                                             ['>>>', 'ДАТА РЕГИСТРАЦИИ', str(data['creation_date'])],
+                                             ['>>>', 'DNSSEC', str(data['dnssec'])],
+                                             ['>>>', 'ДОМЕННОЕ ИМЯ', str(data['domain_name'])],
+                                             ['>>>', 'EMAIL АДРЕСА', str(data['emails'])],
+                                             ['>>>', 'ДАТА ИСТЕЧЕНИЯ', str(data['expiration_date'])],
+                                             ['>>>', 'ИМЯ', str(data['name'])],
+                                             ['>>>', 'ИМЕНА СЕРВЕРОВ', str(data['name_servers'])],
+                                             ['>>>', 'ОРГАНИЗАЦИЯ', str(data['org'])],
+                                             ['>>>', 'РЕФЕРАЛЬНЫЙ URL', str(data['referral_url'])],
+                                             ['>>>', 'РЕГИСТРАТОР', str(data['registrar'])],
+                                             ['>>>', 'URL РЕГИСТРАТОРА', str(data['registrar_url'])],
+                                             ['>>>', 'ПОСРЕДНИК', str(data['reseller'])],
+                                             ['>>>', 'ШТАТ', str(data['state'])],
+                                             ['>>>', 'СТАТУС', str(data['status'])],
+                                             ['>>>', 'ДАТА ОБНОВЛЕНИЯ', str(data['updated_date'])],
+                                             ['>>>', 'СЕРВЕР WHOIS', str(data['whois_server'])]],
+                                            colalign=("center",), tablefmt="grid", showindex="always",
+                                            headers="firstrow", stralign='left', maxcolwidths=[60, 60, 60, 60, 60]))
+    except:
+        print(Fore.LIGHTRED_EX + '>>> [ERROR] ОШИБКА ПРИ ПОЛУЧЕНИЯ ДАННЫХ')
+
 def get_whois_data_from_url(data: str) -> None:
     print(Fore.LIGHTWHITE_EX + '\n>>> Поиск по базе данных WhoIs:')
     from whois import whois
     whois_data = whois(data)
-    whois_table = [['>>>', 'ПАРАМЕТР', 'ЗНАЧЕНИЕ'],
-                       ['>>>', 'АДРЕС', str(whois_data['address'])],
-                       ['>>>', 'ГОРОД', str(whois_data['city'])],
-                       ['>>>', 'СТРАНА', str(whois_data['country'])],
-                       ['>>>', 'ДАТА СОЗДАНИЯ', str(whois_data['creation_date'])],
-                       ['>>>', 'АДРЕС', str(whois_data['address'])],
-                       ['>>>', 'ПРОТОКОЛ DNSSEC', str(whois_data['dnssec'])],
-                       ['>>>', 'ДОМЕННОЕ ИМЯ', str(whois_data['domain_name'])],
-                       ['>>>', 'EMAIL АДРЕСЫ', str(whois_data['emails'])],
-                       ['>>>', 'ДАТА ИСТЕЧЕНИЯ', str(whois_data['address'])],
-                       ['>>>', 'ИМЯ', str(whois_data['name'])],
-                       ['>>>', 'ИМЕНА СЕРВЕРОВ', str(whois_data['name_servers'])],
-                       ['>>>', 'ОРГАНИЗАЦИЯ', str(whois_data['org'])],
-                       ['>>>', 'РЕФЕРАЛЬНЫЙ URL', str(whois_data['referral_url'])],
-                       ['>>>', 'ПОЧТОВЫЙ ИНДЕКС', str(whois_data['registrant_postal_code'])],
-                       ['>>>', 'РЕГИСТРАТОР', str(whois_data['registrar'])],
-                       ['>>>', 'URL РЕГИСТРАТОРА', str(whois_data['registrar_url'])],
-                       ['>>>', 'ПОСРЕДНИК', str(whois_data['reseller'])],
-                       ['>>>', 'ШТАТ', str(whois_data['state'])],
-                       ['>>>', 'ДАТА ОБНОВЛЕНИЯ', str(whois_data['updated_date'])],
-                       ['>>>', 'СЕРВЕР WHOIS', str(whois_data['whois_server'])], ]
-    print(Fore.LIGHTWHITE_EX + tabulate(whois_table, colalign=("center",), tablefmt="grid", showindex="always",
-                                            headers="firstrow", stralign='left',
-                                            maxcolwidths=[60, 60, 60, 60, 60, 60, 60]))
+    try:
+        whois_table = [['>>>', 'ПАРАМЕТР', 'ЗНАЧЕНИЕ'],
+                           ['>>>', 'АДРЕС', str(whois_data['address'])],
+                           ['>>>', 'ГОРОД', str(whois_data['city'])],
+                           ['>>>', 'СТРАНА', str(whois_data['country'])],
+                           ['>>>', 'ДАТА СОЗДАНИЯ', str(whois_data['creation_date'])],
+                           ['>>>', 'АДРЕС', str(whois_data['address'])],
+                           ['>>>', 'ПРОТОКОЛ DNSSEC', str(whois_data['dnssec'])],
+                           ['>>>', 'ДОМЕННОЕ ИМЯ', str(whois_data['domain_name'])],
+                           ['>>>', 'EMAIL АДРЕСЫ', str(whois_data['emails'])],
+                           ['>>>', 'ДАТА ИСТЕЧЕНИЯ', str(whois_data['address'])],
+                           ['>>>', 'ИМЯ', str(whois_data['name'])],
+                           ['>>>', 'ИМЕНА СЕРВЕРОВ', str(whois_data['name_servers'])],
+                           ['>>>', 'ОРГАНИЗАЦИЯ', str(whois_data['org'])],
+                           ['>>>', 'РЕФЕРАЛЬНЫЙ URL', str(whois_data['referral_url'])],
+                           ['>>>', 'ПОЧТОВЫЙ ИНДЕКС', str(whois_data['registrant_postal_code'])],
+                           ['>>>', 'РЕГИСТРАТОР', str(whois_data['registrar'])],
+                           ['>>>', 'URL РЕГИСТРАТОРА', str(whois_data['registrar_url'])],
+                           ['>>>', 'ПОСРЕДНИК', str(whois_data['reseller'])],
+                           ['>>>', 'ШТАТ', str(whois_data['state'])],
+                           ['>>>', 'ДАТА ОБНОВЛЕНИЯ', str(whois_data['updated_date'])],
+                           ['>>>', 'СЕРВЕР WHOIS', str(whois_data['whois_server'])], ]
+        print(Fore.LIGHTWHITE_EX + tabulate(whois_table, colalign=("center",), tablefmt="grid", showindex="always",
+                                                headers="firstrow", stralign='left',
+                                                maxcolwidths=[60, 60, 60, 60, 60, 60, 60]))
+    except:
+        print(Fore.LIGHTWHITE_EX + f'Данные для {data} не найдены')
 
 def get_ip_from_url(data: str) -> None:
     print(Fore.LIGHTWHITE_EX+'\n>>> Поиск IPv4-адресов хостинг-сервера по URL:')
@@ -78,13 +143,13 @@ def get_ssl_certificate(data: str):
                 print(Fore.LIGHTWHITE_EX + tabulate(table, colalign=("center",), tablefmt="grid", showindex="always",
                       headers="firstrow", stralign='left', maxcolwidths=[60, 60, 60, 60, 60]))
     except ssl.SSLError as e:
-        print(f"Ошибка SSL: {e}")
+        print(Fore.LIGHTRED_EX+">>> [ERROR] Ошибка SSL")
         return None
     except socket.gaierror as e:
-        print(f"Ошибка DNS: {e}")
+        print(Fore.LIGHTRED_EX+">>> [ERROR] Ошибка DNS")
         return None
     except Exception as e:
-        print(f"Общая ошибка: {e}")
+        print(Fore.LIGHTRED_EX+">>> [ERROR] Ошибка SSL")
         return None
 
 def input_check(command: str) -> None:
@@ -96,7 +161,7 @@ def input_check(command: str) -> None:
     elif domain(command):
         pass
     elif ipv4(command):
-        pass
+        get_data_from_ip(command)
     elif url(command):
         try:
             response = get(command)
