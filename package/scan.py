@@ -1,6 +1,5 @@
 from config import text_color, error_color, tables_color
 
-
 def xss_test(data: str, payload: str):
     import requests
     try:
