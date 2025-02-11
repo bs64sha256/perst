@@ -20,6 +20,19 @@ def input_check(command: str) -> None:
     elif ipv4(command):
         from package import get_data_from_ip
         get_data_from_ip(command)
+    elif command[0:4] == 'test':
+        data = command[5::]
+        if data == '':
+            print(error_color + '>>> [TARGET] Объект сканирования не введен')
+        else:
+            if url(data):
+                from package import url_stress_test
+                url_stress_test(data)
+            elif ipv4(data):
+                from package import ipv4_ping_test
+                ipv4_ping_test(data)
+            else:
+                print(error_color + '>>> [ERROR] Некорректный ввод')
     elif url(command):
         from package import get_ip_from_url
         from package import get_whois_data_from_url
