@@ -18,12 +18,12 @@ def input_check(command: str) -> None:
     elif ipv6(command):
         print('>>> IPv6-адреса пока не поддерживаются')
     elif ipv4(command):
-        from osint import get_data_from_ip
+        from package import get_data_from_ip
         get_data_from_ip(command)
     elif url(command):
-        from osint import get_ip_from_url
-        from osint import get_whois_data_from_url
-        from osint import get_ssl_certificate
+        from package import get_ip_from_url
+        from package import get_whois_data_from_url
+        from package import get_ssl_certificate
         try:
             response = get(command)
             get_ip_from_url(command)
@@ -32,14 +32,14 @@ def input_check(command: str) -> None:
         except exceptions.ConnectionError:
             print(error_color+'>>> [ERROR] Веб-ресурс не найден')
     elif command[0:4] == 'scan':
-        from scan import scan_ports
+        from package import scan_ports
         data = command[5::]
         if data == '':
             print(error_color + '>>> [TARGET] Объект сканирования не введен')
         else:
             if url(data):
-                from scan import extract_useful_links
-                from scan import xss_test
+                from package import extract_useful_links
+                from package import xss_test
                 extract_useful_links(data)
                 from config import xss_payloads
                 print(text_color+'\n>>> Поиск XSS-уязвимостей:\n')

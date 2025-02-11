@@ -5,3 +5,4 @@ from .osint import get_ip_from_url
 from .osint import get_ssl_certificate
 from .scan import xss_test
 from .scan import scan_ports
+from .scan import extract_useful_links
